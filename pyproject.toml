@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "dajeobot"
+version = "0.1.0"
+description = ""
+authors = ["Danil <headcrabj1@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-telegram-bot = "^20.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
