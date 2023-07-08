@@ -1,13 +1,8 @@
 import logging
-
 import conf
 import cron
 from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    ContextTypes
-)
+from telegram.ext import Application
 import db
 import handler
 
@@ -30,6 +25,7 @@ def main():
     handler.init_start(app)
     handler.init_payment(app)
     handler.init_send(app)
+    handler.init_instruction(app)
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 

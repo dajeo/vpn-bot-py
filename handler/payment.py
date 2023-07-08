@@ -21,7 +21,7 @@ async def start_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     user: db.User = query.get()
 
-    if user.paid_at:
+    if not user.waiting_payment:
         expired_at = translate_date(user.paid_at)
         await update.message.reply_text(f"Вы уже оплатили VPN. Следующая оплата {expired_at}")
         return
@@ -65,33 +65,33 @@ async def successful_payment_callback(update: Update, context: ContextTypes.DEFA
 
     user: db.User = query.get()
 
-    is_old_client = user.old_client
-    client_name = user.name
-
-    if not user.old_client:
+    if user.new_client:
         user.first_paid = now
 
-    if user.transaction_number > 1:
-        user.old_client = True
+    if user.transaction_number >= 1:
+        user.new_client = False
 
     user.paid_at = now
+    user.shutdown_notice = False
+    user.expired = False
+    user.waiting_payment = False
     user.transaction_number += 1
     user.save()
 
     await context.bot.send_message(
         conf.get()["bot"]["owner"],
-        f"Заказ оплачен, клиент \({client_name}\) ожидает конфигурацию\. `{update.message.chat_id}`",
+        f"Заказ оплачен, клиент \({user.name}\) ожидает конфигурацию\. `{update.message.chat_id}`",
         parse_mode=ParseMode.MARKDOWN_V2
     )
 
-    if is_old_client:
+    if user.new_client:
         await update.message.reply_text(
-            "Подписка оплачена! Проверьте подключение к VPN, если оно отсутствует, "
-            "в течении суток все будет восстановлено."
+            "Наши поздравления с покупкой VPN! В течении суток вам будет отправлена инструкция."
         )
     else:
         await update.message.reply_text(
-            "Наши поздравления с покупкой VPN! В течении суток вам будет отправлена инструкция."
+            "Подписка оплачена! Проверьте подключение к VPN, если оно отсутствует, "
+            "в течении суток все будет восстановлено."
         )
 
 
