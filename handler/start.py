@@ -1,5 +1,3 @@
-from babel.dates import format_date
-from dateutil.relativedelta import relativedelta
 from telegram import Update
 from telegram.ext import Application, ContextTypes, CommandHandler, ConversationHandler, filters, MessageHandler
 

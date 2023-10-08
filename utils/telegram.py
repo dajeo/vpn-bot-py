@@ -12,3 +12,7 @@ async def _send_message(chat_id: int, message: str, parse_mode: ParseMode = None
 
 def send_message(chat_id: int, message: str, parse_mode: ParseMode = None):
     asyncio.run(_send_message(chat_id, message, parse_mode))
+
+
+def is_owner(chat_id) -> bool:
+    return chat_id == int(conf.get()["bot"]["owner"])

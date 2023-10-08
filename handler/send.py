@@ -1,16 +1,15 @@
 from telegram import Update
-from telegram.constants import ParseMode
 from telegram.ext import Application, ContextTypes, ConversationHandler, CommandHandler, MessageHandler, filters
 
-import conf
 import handler
+import utils
 from db import User
 
 CLIENT_ID, CONF_FILE = range(2)
 
 
-async def send_to_client(update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
-    if update.message.chat_id != int(conf.get()["bot"]["owner"]):
+async def send(update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
+    if not utils.is_owner(update.message.chat_id):
         return ConversationHandler.END
 
     await update.message.reply_text("Введите ID клиента:")
@@ -42,25 +41,10 @@ async def client_id_conv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def conf_file_conv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     chat_id = context.user_data["chat_id"]
 
-    await context.bot.send_message(
-        chat_id,
-        "1. Установите WireGuard\n\n"
-        "Android: https://play.google.com/store/apps/details?id=com.wireguard.android\n"
-        "iOS: https://apps.apple.com/ru/app/wireguard/id1441195209\n\n"
-        "2. Скачайте файл имя.conf\n\n"
-        "3. Откройте WireGuard и нажмите на кнопку плюс (+)\n\n"
-        "4. Выберете пункт Импорт из файла или архива, выберете скачанный файл и укажите название\n\n"
-        "5. Теперь вверху экрана вы можете активировать только что созданный профиль\n\n"
-        "Проверить работоспособность можно на сайте https://vpn.dajeo.by/check/\n\n"
-        "Для других платформ инструкцию вы можете найти на сайте https://vpn.dajeo.by/instruction\n\n"
-        "<i>Предупреждение: не делитесь вашим профилем, он может обрабатывать только одно подключение!</i>",
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=True
-    )
     await context.bot.send_document(
         chat_id,
         update.message.document,
-        "Ваш конфигурационный файл готов."
+        "Ваш конфигурационный файл готов. Для получения инструкции используйте /instruction"
     )
 
     await update.message.reply_text("Сообщение отправлено.")
@@ -69,7 +53,7 @@ async def conf_file_conv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 def init_send(app: Application):
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("send", send_to_client)],
+        entry_points=[CommandHandler("send", send)],
         states={
             CLIENT_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, client_id_conv)],
             CONF_FILE: [MessageHandler(filters.ATTACHMENT, conf_file_conv)],

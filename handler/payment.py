@@ -12,7 +12,7 @@ from utils import translate_date
 SECRET = str(uuid.uuid4())
 
 
-async def start_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = db.User.select().where(db.User.chat_id == update.message.chat_id)
 
     if not query.exists():
@@ -96,6 +96,6 @@ async def successful_payment_callback(update: Update, context: ContextTypes.DEFA
 
 
 def init_payment(app: Application):
-    app.add_handler(CommandHandler("pay", start_payment))
+    app.add_handler(CommandHandler("pay", payment))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout_callback))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment_callback))

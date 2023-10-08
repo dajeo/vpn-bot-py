@@ -3,3 +3,4 @@ from .payment import init_payment
 from .send import init_send
 from .start import init_start
 from .instruction import init_instruction
+from .reload import init_reload

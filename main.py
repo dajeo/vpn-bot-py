@@ -26,6 +26,7 @@ def main():
     handler.init_payment(app)
     handler.init_send(app)
     handler.init_instruction(app)
+    handler.init_reload(app)
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
