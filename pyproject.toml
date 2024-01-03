@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "dajeobot"
+name = "vpnbot"
 version = "0.1.0"
 description = "Telegram bot to pay for a VPN subscription."
 authors = ["Danil <headcrabj1@gmail.com>"]
 readme = "README.md"
-license = "Proprietary"
+license = "MIT"
 homepage = "https://vpn.dajeo.by/"
 repository = "https://github.com/dajeo/dajeo-bot-py"
 keywords = ["telegram", "bot", "postgres", "vpn"]
